@@ -61,7 +61,7 @@ const operations = {
     fs.unlink(name, (err) => {})
   },
   "deep": () => {
-    console.log(findDeepDirectory(__dirname));
+    console.log(findDeepestDirectory());
   }
 };
 
@@ -102,29 +102,32 @@ process.stdin.on("data", data => {
   process.stdout.write("Invalid command\n");
 })
 
-let results = {};
+let arr = [];
 
-
-function findDeepDirectory(dir) {
-  if (!dir) return;
-
-  fs.readdir(dir, { withFileTypes: true }, (err, list) => {
-      if (err) {
-        return 'Error'
-      };
-
-      if (!list.length) {
-        return 'Empty'
-      };
-
-      list.forEach((file, index) => {
-        if (file.isDirectory()) {
-          results[file.name] = results[file.name] ? (results[file.name]++) : 1;
-          console.log(file.name)
-          findDeepDirectory(file.name);
-        }
-      });
+function getAllFiles(dirPath){
+  fs.readdirSync(dirPath).forEach(function(file) {
+    let filepath = path.join(dirPath , file);
+    let stat= fs.statSync(filepath);
+    if (stat.isDirectory()) {
+      getAllFiles(filepath);
+      arr.push(filepath)
+    }
   });
+}
 
- return results;
-};
+function findDeepestDirectory() {
+  getAllFiles(process.cwd());
+
+  let deepest = 0;
+  let index;
+  arr.forEach((item, ind) => {
+    if (item.split('/').length > deepest) {
+      deepest = item.split('/').length;
+      index = ind;
+    }
+  })
+
+  fs.writeFile(`${arr[index]}`, 'hello world', (err) => {
+    console.log(err, 'Error')
+  })
+}
