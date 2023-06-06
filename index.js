@@ -60,8 +60,8 @@ const operations = {
   "rm": (name) => {
     fs.unlink(name, (err) => {})
   },
-  "deep": () => {
-    console.log(findDeepestDirectory());
+  "deep": (folder) => {
+    findDeepestDirectory(`${folder.toString().trim()}`);
   }
 };
 
@@ -106,7 +106,7 @@ let arr = [];
 
 function getAllFiles(dirPath){
   fs.readdirSync(dirPath).forEach(function(file) {
-    let filepath = path.join(dirPath , file);
+    let filepath = path.join(dirPath, file);
     let stat= fs.statSync(filepath);
     if (stat.isDirectory()) {
       getAllFiles(filepath);
@@ -115,8 +115,8 @@ function getAllFiles(dirPath){
   });
 }
 
-function findDeepestDirectory() {
-  getAllFiles(process.cwd());
+function findDeepestDirectory(folder) {
+  getAllFiles(folder);
 
   let deepest = 0;
   let index;
@@ -127,7 +127,7 @@ function findDeepestDirectory() {
     }
   })
 
-  fs.writeFile(`${arr[index]}`, 'hello world', (err) => {
-    console.log(err, 'Error')
+  fs.writeFile(arr[index] + '/file.txt', 'hello world', (res, err) => {
+    process.exit(0)
   })
 }
