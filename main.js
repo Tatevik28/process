@@ -1,24 +1,21 @@
 import fs from 'fs';
 import _ from 'lodash';
 
-console.log('Please enter command!');
 const operations = {
     'uppercase': (string) => string.toUpperCase(),
     'lowercase': (string) => string.toLowerCase(),
     'reverse': (string) => string.split("").reverse().join(""),
 }
-process.stdin.on('data', data => {
-    data = data.toString().trim();
-    let dataArr = data.split(' ');
-    if (dataArr.length !== 3) {
-        console.log('Please enter correct combination of command');
-    } else if (!operations.hasOwnProperty(dataArr[2])) {
+
+if (process.argv[0].includes('node.exe') && process.argv[1].includes('main.js')) {
+   if (process.argv.length !== 5) {
+    console.log('Please enter correct combination of command');
+    } else if (!operations.hasOwnProperty(process.argv[4])) {
         console.log('Invalid operation');
     } else {
-        createStreams(...dataArr);
+        createStreams(process.argv[2], process.argv[3], process.argv[4]);
     }
-})
-
+}
 
 function createStreams(inputFile, outputFile, operation) {
     const readableStream = fs.createReadStream(inputFile);
